@@ -20,6 +20,21 @@ class Product {
         console.log(err);
       });
   }
+
+  static fetchAll() {
+    const db = getDb();
+    return db
+      .collection("products")
+      .find() // find returns a handle / pointer to the documents
+      .toArray() // this should only be used if the data is small
+      .then((products) => {
+        console.log(products);
+        return products;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 }
 
 module.exports = Product;

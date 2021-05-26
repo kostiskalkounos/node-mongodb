@@ -1,7 +1,7 @@
 const path = require("path");
 const express = require("express");
 const adminRoutes = require("./routes/admin");
-// const shopRoutes = require("./routes/shop");
+const shopRoutes = require("./routes/shop");
 const errorController = require("./controllers/error");
 const mongoConnect = require("./util/database").mongoConnect;
 
@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/admin", adminRoutes);
-// app.use(shopRoutes);
+app.use(shopRoutes);
 
 app.use(errorController.get404);
 
