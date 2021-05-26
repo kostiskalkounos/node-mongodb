@@ -2,18 +2,26 @@ const mongodb = require("mongodb");
 const getDb = require("../util/database").getDb;
 
 class Product {
-  constructor(title, price, imageUrl, description) {
+  constructor(title, price, imageUrl, description, id) {
     this.title = title;
     this.price = price;
     this.imageUrl = imageUrl;
     this.description = description;
+    this._id = new mongodb.ObjectId(id); // convert the string into a MongoDB ObjectId
   }
 
   save() {
     const db = getDb();
-    return db
-      .collection("products") // it's created when we insert data if it doesn't exist
-      .insertOne(this)
+    let dbOp;
+    if (this._id) {
+      // Update the product
+      dbOp = db
+        .collection("products")
+        .updateOne({ _id: this._id }, { $set: this }); // $set is a mongoDB operator
+    } else {
+      dbOp = db.collection("products").insertOne(this); // it's created when we insert data if it doesn't exist
+    }
+    return dbOp
       .then((result) => {
         console.log(result);
       })
