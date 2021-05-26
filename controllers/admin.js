@@ -16,13 +16,10 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const description = req.body.description;
-  req.user // this creates a connected model between the user and the product and add the userId automatically
-    .createProduct({
-      title: title,
-      price: price,
-      imageUrl: imageUrl,
-      description: description,
-    })
+  const product = new Product(title, price, imageUrl, description);
+
+  product
+    .save()
     .then(() => {
       console.log("Created Product");
       res.redirect("/admin/products");
