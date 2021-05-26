@@ -48,19 +48,12 @@ exports.getIndex = (req, res, next) => {
 exports.getCart = (req, res, next) => {
   req.user
     .getCart()
-    .then((cart) => {
-      return cart
-        .getProducts()
-        .then((products) => {
-          res.render("shop/cart", {
-            pageTitle: "Your Cart",
-            path: "/cart",
-            products: products,
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    .then((products) => {
+      res.render("shop/cart", {
+        pageTitle: "Your Cart",
+        path: "/cart",
+        products: products,
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -75,39 +68,8 @@ exports.postCart = (req, res, next) => {
     })
     .then((result) => {
       console.log(result);
+      res.redirect("/cart");
     });
-
-  // let fetchedCart;
-  // let newQuantity = 1;
-  // req.user
-  //   .getCart()
-  //   .then((cart) => {
-  //     fetchedCart = cart;
-  //     return cart.getProducts({ where: { id: prodId } });
-  //   })
-  //   .then((products) => {
-  //     let product;
-  //     if (products.length > 0) {
-  //       product = products[0];
-  //     }
-  //     if (product) {
-  //       const oldQuantity = product.cartItem.quantity; // sequelize gives us access
-  //       newQuantity = oldQuantity + 1;
-  //       return product; // automatically wrapped by promise
-  //     }
-  //     return Product.findByPk(prodId);
-  //   })
-  //   .then((product) => {
-  //     return fetchedCart.addProduct(product, {
-  //       through: { quantity: newQuantity },
-  //     });
-  //   })
-  //   .then(() => {
-  //     res.redirect("/cart");
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
 };
 
 exports.postCartDeleteProduct = (req, res, next) => {
@@ -143,7 +105,7 @@ exports.postOder = (req, res, next) => {
         .then((order) => {
           return order.addProducts(
             products.map((product) => {
-              product.orderItem = { quantity: product.cartItem.quantity }; // this come from /models/order-item.ejs
+              product.orderItem = { quantity: product.cartItem.quantity }; // this comes from /models/order-item.ejs
               return product;
             })
           );

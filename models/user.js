@@ -40,7 +40,31 @@ class User {
     const db = getDb();
     return db
       .collection("users")
-      .updateOne({ _id: ObjectId(this._id) }, { $set: { cart: updatedCart } });
+      .updateOne(
+        { _id: new ObjectId(this._id) },
+        { $set: { cart: updatedCart } }
+      );
+  }
+
+  getCart() {
+    const db = getDb();
+    const productIds = this.cart.items.map((i) => {
+      return i.productId;
+    });
+    return db
+      .collection("products")
+      .find({ _id: { $in: productIds } }) // return all the items with the ids contained in the array
+      .toArray()
+      .then((products) => {
+        return products.map((p) => {
+          return {
+            ...p,
+            quantity: this.cart.items.find((i) => {
+              return i.productId.toString() === p._id.toString();
+            }).quantity, // extract the quantity from the cart item product
+          };
+        });
+      });
   }
 
   static findById(userId) {
