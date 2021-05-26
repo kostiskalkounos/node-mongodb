@@ -20,13 +20,12 @@ app.use((req, res, next) => {
   User.findById("60ae56cc258f11f738293c6a") // I created that user manually in the db
     .then((user) => {
       // Store the user we retrive from the database into the request
-      req.user = user; // user is a sequelize object and it includes methods like destroy()
+      req.user = user;
       next(); // continue with the next step if we got our user and stored it
     })
     .catch((err) => {
       console.log(err);
     });
-  next();
 });
 
 app.use("/admin", adminRoutes);
