@@ -1,6 +1,8 @@
 const mongodb = require("mongodb");
 const getDb = require("../util/database").getDb;
 
+const ObjectId = mongodb.ObjectId;
+
 class Product {
   constructor(title, price, imageUrl, description, id, userId) {
     this.title = title;
@@ -67,7 +69,18 @@ class Product {
       .collection("products")
       .deleteOne({ _id: new mongodb.ObjectId(prodId) })
       .then(() => {
-        console.log("Deleted");
+        return db.collection("users").updateOne(
+          {
+            _id: new ObjectId(userId),
+          },
+          { $pull: { "cart.items": { productId: new ObjectId(prodId) } } }
+        );
+      })
+      .then(() => {
+        console.log("Cart Item Deleted");
+      })
+      .then(() => {
+        console.log("Product Deleted");
       })
       .catch((err) => {
         console.log(err);
