@@ -1,3 +1,4 @@
+const mongodb = require("mongodb");
 const getDb = require("../util/database").getDb;
 
 class Product {
@@ -25,11 +26,26 @@ class Product {
     const db = getDb();
     return db
       .collection("products")
-      .find() // find returns a handle / pointer to the documents
+      .find() // find returns a handle / pointer / cursor to the documents
       .toArray() // this should only be used if the data is small
       .then((products) => {
         console.log(products);
         return products;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  static findById(prodId) {
+    const db = getDb();
+    return db
+      .collection("products")
+      .find({ _id: new mongodb.ObjectId(prodId) }) // convert the id to an ObjectId MonogoDb uses
+      .next() // return the next and in this case the last document, we only have 1
+      .then((product) => {
+        console.log(product);
+        return product;
       })
       .catch((err) => {
         console.log(err);
