@@ -98,7 +98,7 @@ exports.postOder = (req, res, next) => {
 
 exports.getOrders = (req, res, next) => {
   req.user
-    .getOrders({ include: ["products"] }) // fetch all the related products too
+    .getOrders()
     .then((orders) => {
       res.render("shop/orders", {
         pageTitle: "Your Orders",
